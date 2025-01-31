@@ -5,6 +5,10 @@ import { CoursesComponent } from './courses/courses.component';
 import { ContactComponent } from './contact/contact.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { CourseDetailComponent } from './courses/course-detail/course-detail.component';
+import { LoginComponent } from './login/login.component';
+import { CheckoutComponent } from './checkout/checkout.component';
+import { AuthguardService } from './Services/authguard.service';
+import { canActivated } from './auth.gaurd';
 
 
 export const routes: Routes = [
@@ -14,6 +18,10 @@ export const routes: Routes = [
     {path: 'About', component: AboutComponent},
     {path: 'Contact', component: ContactComponent},
     {path: 'Courses', component: CoursesComponent},
-    {path: 'Courses/Course/:id', component: CourseDetailComponent},
+    {path: 'Courses', children: [
+        {path: 'Course/:id', component: CourseDetailComponent},
+        {path: 'Checkout', component: CheckoutComponent, canActivate: [canActivated]}
+    ] },
+    {path: 'Login', component: LoginComponent},
     {path: '**', component: NotFoundComponent},
 ];

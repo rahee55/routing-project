@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Course } from '../Models/course';
 import { CourseService } from '../Services/course.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-courses',
@@ -12,23 +12,32 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 })
 export class CoursesComponent implements OnInit{
   coursesService = inject(CourseService);
-  AllCourses: Course[] = this.coursesService.courses;
-
+  AllCourses!: Course[];
   searchString!: string;
 
-  activeRoute: ActivatedRoute = inject(ActivatedRoute)
+  activeRoute: ActivatedRoute = inject(ActivatedRoute);
 
   ngOnInit(){
-    this.searchString = String(this.activeRoute.snapshot.queryParamMap.get('search'));
+    // this.searchString = this.activeRoute.snapshot.queryParams['search'];
+    // this.searchString = this.activeRoute.snapshot.queryParamMap.get('search');
+    // console.log(this.searchString);
 
-    if(this.searchString === undefined || this.searchString === '' || this.searchString === null){
-      this.AllCourses = this.coursesService.courses
-    }
-    else{
-      this.AllCourses = this.coursesService.courses.filter(
-        x => x.title.toLowerCase().includes(this.searchString.toLowerCase())
-      )
-    }
+    this.activeRoute.queryParamMap.subscribe((data) => {
+      this.searchString = String(data.get('search'));
+
+      if(this.searchString === undefined || this.searchString === '' || this.searchString === null){
+        // this.coursesService.getAllcourses().subscribe((data: Course[]) => {
+        //   this.AllCourses = data;
+        // });
+
+        this.AllCourses = this.activeRoute.snapshot.data['courses'];
+      }else{
+        this.AllCourses = this.coursesService.courses
+          .filter(x => x.title.toLowerCase()
+          .includes(this.searchString.toLowerCase()));
+      }
+    })
+
+    
   }
-
 }
